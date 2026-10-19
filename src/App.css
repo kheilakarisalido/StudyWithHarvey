@@ -177,6 +177,8 @@ button:hover {
 }
 
 .themeCard {
+  box-sizing: border-box;
+  min-width: 0;
   background: rgba(0, 0, 0, 0.25) !important;
   color: #ffffff !important;
   border-radius: 20px;
@@ -188,8 +190,11 @@ button:hover {
 }
 
 .themeCard img {
-  width: 48px;
-  height: 48px;
+  display: block;
+  width: min(48px, 100%);
+  height: auto;
+  aspect-ratio: 1;
+  max-width: 100%;
   object-fit: contain;
   filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.65));
 }
@@ -199,12 +204,6 @@ button:hover {
   background: rgba(255, 255, 255, 0.32) !important;
   border-color: #ffffff !important;
   transform: scale(1.04);
-}
-
-.difficultyPicker {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
 }
 
 input,
@@ -238,72 +237,737 @@ input::placeholder {
   flex-wrap: wrap;
 }
 
-.stats {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.stats span {
-  background: rgba(0, 0, 0, 0.35);
-  color: #ffffff;
-  padding: 8px 13px;
-  border-radius: 999px;
-  font-weight: 800;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-}
-
-.gameControls {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-}
-
-.gameBox {
-  min-height: 390px;
-  display: grid;
-  place-items: center;
-  font-size: 23px;
-  font-weight: 800;
+.studyStage {
+  position: absolute;
+  inset: 12px;
+  overflow: hidden;
+  width: auto;
+  height: auto;
+  aspect-ratio: auto;
+  min-height: 0;
+  margin: 0;
+  box-sizing: border-box;
   border-radius: 28px;
   text-align: center;
   color: #ffffff;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 2px solid rgba(255, 255, 255, 0.35);
-  background: rgba(0, 0, 0, 0.25);
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.12)),
+    var(--farm-background);
+  background-position: center;
+  background-size: 123% 123%;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.75);
 }
 
-.gameOverButtons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 18px;
-  flex-wrap: wrap;
+.studyStage.plantingSeeds {
+  cursor: crosshair;
 }
 
-canvas {
-  max-width: 100%;
-  height: auto;
+.farmWaterfallAnimation {
+  position: absolute;
+  top: -2%;
+  left: 17%;
+  z-index: 1;
+  width: 11%;
+  height: 23%;
+  background-image: var(--waterfall-sprite);
+  background-repeat: no-repeat;
+  background-size: 500% 100%;
+  background-position: 0 0;
+  image-rendering: pixelated;
+  pointer-events: none;
+  animation: farmWaterfallFlow 0.8s steps(4, end) infinite;
 }
 
-.floatingChars {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 8;
+.farmCampfireAnimation {
+  position: absolute;
+  top: 51%;
+  left: 83%;
+  z-index: 3;
+  width: 7%;
+  height: 8%;
+  background-image: var(--campfire-sprite);
+  background-repeat: no-repeat;
+  background-size: 500% 100%;
+  background-position: 0 0;
+  image-rendering: pixelated;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: farmCampfireFlicker 0.8s steps(4, end) infinite;
+}
+
+@keyframes farmCampfireFlicker {
+  to {
+    background-position: 100% 0;
+  }
+}
+
+@keyframes farmWaterfallFlow {
+  to {
+    background-position: 100% 0;
+  }
+}
+
+.farmPlants {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
   pointer-events: none;
 }
 
-.char {
-  width: 120px;
+.farmCrop {
+  position: absolute;
+  width: clamp(14px, 9%, 32px);
+  transform: translate(-50%, -84%);
+  display: grid;
+  justify-items: center;
+  align-items: end;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  text-shadow: none;
+  line-height: normal;
+  pointer-events: none;
+}
+
+.farmCropReady {
+  z-index: 1;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.farmCropReady:hover,
+.farmCropReady:focus-visible {
+  z-index: 2;
+  transform: translate(-50%, -90%) scale(1.12);
+  background: transparent;
+  outline: 2px solid #fff2a6;
+  outline-offset: 2px;
+}
+
+.cropSprite {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4));
+}
+
+.cropSellTag {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  padding: 2px 5px;
+  border-radius: 999px;
+  background: #fff2a6;
+  color: #4b3210;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, 3px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  text-shadow: none;
+}
+
+.farmCropReady:hover .cropSellTag,
+.farmCropReady:focus-visible .cropSellTag {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.seedInventory {
+  position: absolute;
+  z-index: 6;
+  left: 50%;
+  bottom: 12px;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  max-width: calc(100% - 24px);
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 14px;
+  background: rgba(7, 38, 19, 0.96);
+  color: #fff8ce;
+  font-size: 11px;
+  text-align: center;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65);
+  pointer-events: auto;
+  transform: translateX(-50%);
+}
+
+.seedInventoryItems {
+  display: flex;
+  gap: 6px;
+}
+
+.seedInventory button {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 42px;
+  height: 42px;
+  padding: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 8px;
+  background: rgba(17, 67, 34, 0.98);
+  color: #fff;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.seedInventory button img {
+  display: block;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
-  animation: floaty 3s infinite;
+  image-rendering: pixelated;
+  justify-self: center;
+  align-self: center;
+}
+
+.seedInventory button.selectedSeed {
+  border: 2px solid #fff2a6;
+  background: rgba(30, 105, 52, 0.98);
+  box-shadow: 0 0 10px rgba(255, 242, 166, 0.8);
+}
+
+.emptySeedSlot {
+  width: 42px;
+  height: 42px;
+  box-sizing: border-box;
+  border: 1px dashed rgba(255, 255, 255, 0.55);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.inventoryHint {
+  font-size: 10px;
+}
+
+.farmMessage {
+  max-width: min(300px, calc(100vw - 32px));
+  color: #fff8ce;
+}
+
+.farmInstructions {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+
+.farmInstructions p {
+  margin: 0;
+}
+
+.plantAnnouncement {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 8;
+  padding: 10px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 999px;
+  background: rgba(24, 43, 24, 0.92);
+  color: #fff8ce;
+  font-weight: 800;
+  white-space: nowrap;
+  pointer-events: none;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65);
+  transform: translate(-50%, -50%);
+  animation: plantAnnouncement 0.4s ease-out forwards;
+}
+
+@keyframes plantAnnouncement {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -42%) scale(0.85);
+  }
+
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -58%) scale(1.05);
+  }
+}
+
+.quizCompletionAnnouncement {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 8;
+  padding: 10px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 999px;
+  background: rgba(24, 43, 24, 0.92);
+  color: #fff8ce;
+  font-weight: 800;
+  white-space: nowrap;
+  pointer-events: none;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65);
+  transform: translate(-50%, -50%);
+  animation: quizCompletionAnnouncement 0.5s ease-out forwards;
+}
+
+@keyframes quizCompletionAnnouncement {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -42%) scale(0.85);
+  }
+
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -58%) scale(1.05);
+  }
+}
+
+.farmShopStall {
+  position: absolute;
+  z-index: 4;
+  width: 9.4%;
+  height: 17.8%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  transform: translate(-50%, -50%);
+  cursor: default;
+}
+
+.farmShopStall img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
+
+.farmShopStall:disabled {
+  transform: translate(-50%, -50%);
+}
+
+.farmShopStall.farmShopNearby {
+  cursor: pointer;
+  animation: shopHintPulse 1.2s ease-in-out infinite alternate;
+}
+
+.farmShopStall.farmShopNearby:hover {
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+.farmShopLabel {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  padding: 3px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  background: rgba(51, 75, 37, 0.9);
+  color: #fff8ce;
+  font-size: 9px;
+  line-height: 1.1;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+@keyframes shopHintPulse {
+  from {
+    filter: drop-shadow(0 0 5px rgba(255, 242, 166, 0.6));
+  }
+
+  to {
+    filter: drop-shadow(0 0 14px rgba(255, 242, 166, 1));
+  }
+}
+
+.cropSeeds {
+  position: relative;
+  display: block;
+  width: 34px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(71, 42, 20, 0.9), transparent 72%);
+}
+
+.cropSeeds i {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 5px;
+  height: 3px;
+  border-radius: 50%;
+  background: #e6c777;
+  box-shadow: 0 1px 2px rgba(40, 25, 10, 0.8);
+}
+
+.cropSeeds i:first-child {
+  transform: translateX(-10px) rotate(-25deg);
+}
+
+.cropSeeds i:nth-child(2) {
+  transform: translateX(-2px) rotate(12deg);
+}
+
+.cropSeeds i:last-child {
+  transform: translateX(6px) rotate(-12deg);
+}
+
+.studyStageContent {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  z-index: 5;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  width: min(calc(100% - 24px), 250px);
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 16px;
+  background: rgba(10, 35, 19, 0.7);
+  transform: translateX(-50%);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.studyStageContent.fading {
+  opacity: 0;
+}
+
+.studyStageContent button {
+  pointer-events: auto;
+}
+
+.studyStage h2,
+.studyStage p {
+  margin: 0;
+}
+
+.studyPlayer {
+  position: absolute;
+  z-index: 3;
+  width: 6.15%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  image-rendering: pixelated;
+  transition: left 0.3s linear, top 0.3s linear;
+  background-image: var(--harvey-sprite);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+}
+
+.studyPlayer.harvey.idle {
+  background-position: right center;
+}
+
+.studyPlayer.harvey.moving {
+  background-position: left center;
+}
+
+.movementHint {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.endQuizButton {
+  display: block;
+  margin: 12px auto 0;
+}
+
+.pauseQuizButton {
+  margin-top: 14px;
+}
+
+.economyHud {
+  position: fixed;
+  z-index: 25;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100vw - 28px);
+}
+
+.economyActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.coinBalance {
+  padding: 9px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 999px;
+  background: rgba(24, 43, 24, 0.9);
+  color: #fff8ce;
+  font-weight: 800;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+}
+
+.rewardShopButton {
+  padding: 9px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  background: rgba(110, 64, 104, 0.94);
+  color: #fff8ff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+  cursor: pointer;
+}
+
+.rewardShopButton:hover {
+  background: rgba(137, 78, 129, 0.98);
+}
+
+.photoAlbumButton {
+  padding: 9px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  background: rgba(47, 102, 67, 0.95);
+  color: #fff8ff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+  cursor: pointer;
+}
+
+.photoAlbumButton:hover {
+  background: rgba(64, 132, 86, 0.98);
+}
+
+.equippedReward {
+  position: fixed;
+  z-index: 21;
+  right: 16px;
+  bottom: 16px;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  width: 82px;
+  padding: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 16px;
+  background: rgba(24, 43, 24, 0.88);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  text-align: center;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65);
+}
+
+.equippedReward img {
+  width: 68px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.shopOverlay {
+  z-index: 30;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.shopCard {
+  width: min(920px, 96vw);
+  max-height: min(88vh, 900px);
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  border-radius: 24px;
+  background: #f7fff0;
+  color: #263c26;
+  box-shadow: 0 20px 50px rgba(20, 35, 20, 0.4);
+  text-shadow: none;
+}
+
+.shopHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.shopHeader h2,
+.shopHeader p,
+.shopCard h3,
+.shopItem h4,
+.shopItem p {
+  margin: 0;
+}
+
+.shopHeader h2 {
+  font-size: 24px;
+}
+
+.shopHeader p {
+  margin-top: 4px;
+  color: #536b4b;
+  font-weight: 700;
+}
+
+.closeShopButton {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  font-size: 26px;
+  line-height: 1;
+  color: #263c26;
+  background: #e6f0df;
+  text-shadow: none;
+}
+
+.shopCard h3 {
+  margin: 18px 0 9px;
+  color: #34532f;
+}
+
+.shopMessage {
+  margin: 12px 0;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: #e3f2dc;
+  color: #34532f;
+  font-weight: 800;
+}
+
+.shopGrid {
+  display: grid;
+  gap: 10px;
+}
+
+.seedShopGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.rewardShopGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.shopItem {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid #cfdfc5;
+  border-radius: 16px;
+  background: #ffffff;
+  text-align: center;
+}
+
+.shopItem > img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+}
+
+.rewardShopItem > img {
+  width: 100%;
+  height: 110px;
+  object-fit: contain;
+}
+
+.shopItem h4 {
+  font-size: 13px;
+}
+
+.shopItem p {
+  min-height: 30px;
+  color: #65735f;
+  font-size: 11px;
+}
+
+.shopItem button {
+  width: 100%;
+  padding: 7px 8px;
+  background: #4e7b42;
+}
+
+.shopItem button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+  transform: none;
+}
+
+@media (max-width: 900px) {
+  .studyStage {
+    position: relative;
+    inset: auto;
+    width: min(100%, calc((100vh - 80px) * 2 / 3));
+    height: auto;
+    aspect-ratio: 2 / 3;
+    margin-inline: auto;
+  }
+
+  .seedShopGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .economyHud {
+    top: 8px;
+    right: 8px;
+    gap: 5px;
+  }
+
+  .coinBalance {
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+
+  .rewardShopButton {
+    padding: 7px 9px;
+    font-size: 11px;
+  }
+
+  .photoAlbumButton {
+    padding: 7px 9px;
+    font-size: 11px;
+  }
+
+  .economyHud,
+  .economyActions {
+    gap: 5px;
+  }
+
+  .shopCard {
+    padding: 14px;
+  }
+
+  .seedShopGrid,
+  .rewardShopGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .themeParticles {
@@ -452,12 +1116,6 @@ canvas {
   }
 }
 
-@keyframes floaty {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
-  100% { transform: translateY(0); }
-}
-
 @keyframes sparkle {
   0% {
     transform: translateY(100vh) rotate(0deg);
@@ -513,15 +1171,15 @@ canvas {
     height: auto;
   }
 
-  .gameControls,
-  .buttonRow,
-  .gameOverButtons {
+  .studyStage {
+    width: min(100%, calc((100vh - 80px) * 2 / 3));
+    aspect-ratio: 2 / 3;
+  }
+
+  .buttonRow {
     flex-direction: column;
   }
 
-  .char {
-    width: 95px;
-  }
 }
 
 .quizProgress {
@@ -535,57 +1193,6 @@ canvas {
   font-weight: 800;
   margin-bottom: 10px;
   text-shadow: none;
-}
-
-.countdownOverlay {
-  min-height: 390px;
-  display: grid;
-  place-items: center;
-  border-radius: 28px;
-  background: rgba(0, 0, 0, 0.22);
-  border: 2px solid rgba(255, 255, 255, 0.32);
-}
-
-.countdownCard {
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: #ffffff;
-  color: #2c1b3f;
-  font-size: 42px;
-  font-weight: 800;
-  box-shadow: 0 16px 40px rgba(35, 20, 50, 0.35);
-  text-shadow: none;
-  animation: countdownPop 0.35s ease;
-}
-
-.gameOverCard h2 {
-  margin: 0 0 12px;
-  font-size: 30px;
-}
-
-.finalStats {
-  display: grid;
-  gap: 4px;
-  margin: 12px 0;
-}
-
-.finalStats p {
-  margin: 0;
-}
-
-@keyframes countdownPop {
-  from {
-    opacity: 0;
-    transform: scale(0.75);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
 }
 
 .choiceButton.correct {
@@ -631,20 +1238,183 @@ canvas {
 }
 
 .cleanCharacterBox {
-  width: 150px;
-  height: 150px;
+  width: min(150px, 40vw, 28vh);
+  aspect-ratio: 1;
   border-radius: 32px;
   display: grid;
   place-items: center;
   background: rgba(0, 0, 0, 0.25);
   border: 2px solid rgba(255, 255, 255, 0.35);
+  box-sizing: border-box;
 }
 
-.cleanCharacterBox img {
-  width: 110px;
-  height: 110px;
+.cleanCharacterBox img,
+.currentCharacterBox img {
+  display: block;
+  width: 78%;
+  height: 78%;
   object-fit: contain;
   filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.75));
+}
+
+.currentCharacterBox {
+  width: min(120px, 36vw, 24vh);
+  aspect-ratio: 1;
+  margin: 10px auto;
+  border-radius: 24px;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.photoAlbumOverlay {
+  z-index: 32;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.photoAlbumCard {
+  width: min(900px, 96vw);
+  max-height: min(88vh, 900px);
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  border-radius: 24px;
+  background: #f7fff0;
+  color: #263c26;
+  box-shadow: 0 20px 50px rgba(20, 35, 20, 0.4);
+  text-shadow: none;
+}
+
+.photoAlbumCard h2,
+.photoAlbumCard p {
+  margin: 0;
+}
+
+.photoAlbumCard .shopHeader p {
+  margin-top: 4px;
+}
+
+.photoAlbumEmpty {
+  padding: 28px 12px;
+  color: #536b4b;
+  text-align: center;
+}
+
+.photoAlbumGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.photoAlbumItem {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid #cfdfc5;
+  border-radius: 16px;
+  background: #ffffff;
+  text-align: center;
+}
+
+.photoAlbumImageButton {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 140px;
+  padding: 6px;
+  border: 0;
+  border-radius: 10px;
+  background: #f1f5ed;
+  box-shadow: none;
+}
+
+.photoAlbumImageButton img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.photoAlbumImageButton:hover {
+  background: #e4eddd;
+  transform: none;
+}
+
+.photoAlbumItem h3 {
+  margin: 0;
+  color: #34532f;
+  font-size: 14px;
+}
+
+.setIconButton,
+.restoreThemeIconButton {
+  padding: 8px 12px;
+  background: #4e7b42;
+  color: #ffffff;
+  text-shadow: none;
+}
+
+.setIconButton:disabled {
+  cursor: default;
+  opacity: 0.65;
+  transform: none;
+}
+
+.restoreThemeIconButton {
+  display: block;
+  margin: 16px auto 0;
+  background: #6e6484;
+}
+
+.rewardViewerOverlay {
+  z-index: 40;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.rewardViewerCard {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  width: min(1000px, 96vw);
+  max-height: 94vh;
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 22px;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  border-radius: 24px;
+  background: #f7fff0;
+  color: #263c26;
+  text-align: center;
+}
+
+.rewardViewerClose {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+}
+
+.rewardViewerImage {
+  display: block;
+  max-width: 88vw;
+  max-height: 76vh;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.rewardViewerCard h2 {
+  margin: 0;
+  color: #34532f;
 }
 
 .cleanStatus {

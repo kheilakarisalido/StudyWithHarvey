@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function QuizModal({
   open,
@@ -7,12 +7,10 @@ function QuizModal({
   feedback,
   currentNumber,
   totalQuestions,
+  correctAnswerCount,
+  onPause,
 }) {
   const [selected, setSelected] = useState(null);
-
-  useEffect(() => {
-    setSelected(null);
-  }, [question, open]);
 
   if (!open || !question) return null;
 
@@ -30,7 +28,7 @@ function QuizModal({
           Question {currentNumber} of {totalQuestions}
         </div>
 
-        <h2>Revive Quiz 💖</h2>
+        <h2>Study Quiz 📚</h2>
 
         <p className="quizSubtitle">Choose the correct answer</p>
 
@@ -72,6 +70,15 @@ function QuizModal({
               </p>
             )}
           </div>
+        )}
+        {correctAnswerCount >= 5 && !feedback && (
+          <button
+            type="button"
+            className="pauseQuizButton"
+            onClick={onPause}
+          >
+            Pause Quiz
+          </button>
         )}
       </div>
     </div>

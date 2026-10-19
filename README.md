@@ -1,5 +1,18 @@
 # React + Vite
 
+## Quiz API
+
+Install the Python API dependencies and run the server from the project root:
+
+```powershell
+python -m pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+Open `http://127.0.0.1:8000/generateQuiz?topic=pharmacology` to get a local
+five-question pharmacology quiz as JSON. The local quiz endpoint does not
+download or load a language model at startup.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
